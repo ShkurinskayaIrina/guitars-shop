@@ -64,6 +64,7 @@ export const addCommentAction  = createAsyncThunk<void, NewComment, {
   async (comment, {dispatch, extra: api}) => {
     try {
       await api.post<Comments>(APIRoute.Comments, comment);
+      dispatch(fetchComments(Number(comment.guitarId)));
     } catch (error) {
       errorHandle(error);
     }

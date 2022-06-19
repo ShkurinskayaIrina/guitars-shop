@@ -5,7 +5,7 @@ import {Provider} from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import * as Redux from 'react-redux';
 import {configureMockStore} from '@jedmao/redux-mock-store';
-import HistoryRouter from '../history-route/history-route';
+import HistoryRouter from '../history-router/history-router';
 import Pagination from './pagination';
 import {AppRoute, NameSpace } from '../../consts';
 

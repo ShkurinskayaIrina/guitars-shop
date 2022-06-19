@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
-import HistoryRouter from '../history-route/history-route';
+import HistoryRouter from '../history-router/history-router';
 import CharacteristicsTab from './characteristics-tab';
 import { makeFakeGuitar } from '../../utils/mocks';
 

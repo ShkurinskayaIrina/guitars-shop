@@ -2,7 +2,7 @@ import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {Routes, Route} from 'react-router-dom';
 import {createMemoryHistory} from 'history';
-import HistoryRouter from '../history-route/history-route';
+import HistoryRouter from '../history-router/history-router';
 import Breadcrumbs from './breadcrumbs';
 
 const history = createMemoryHistory();

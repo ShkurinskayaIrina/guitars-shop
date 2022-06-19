@@ -4,7 +4,7 @@ import FocusLock from 'react-focus-lock';
 import { isEscEvent } from '../../utils/utils';
 
 import { useAppDispatch } from '../../hooks';
-import { addCommentAction, fetchComments } from '../../store/api-actions';
+import { addCommentAction } from '../../store/api-actions';
 
 import { NewComment } from '../../types/guitars';
 import { STAR_COUNT, ratingRange } from '../../consts';
@@ -45,7 +45,6 @@ function ReviewModal({idGuitar, guitarName, onReviewCloseClick, openModalSuccess
 
   const onSubmit = (commentData: NewComment) => {
     dispatch(addCommentAction(commentData));
-    dispatch(fetchComments(Number(idGuitar)));
   };
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {

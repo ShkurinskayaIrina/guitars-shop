@@ -20,7 +20,7 @@ function Catalog():JSX.Element {
     GUITAR_COUNT_SHOWN*(Number(pageNumber)-1)+GUITAR_COUNT_SHOWN);
 
   return (
-    <div className="catalog">
+    <div className="catalog" data-testid="catalog">
       <form className="catalog-filter">
         <h2 className="title title--bigger catalog-filter__title">Фильтр</h2>
         <fieldset className="catalog-filter__block">
