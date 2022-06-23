@@ -57,12 +57,6 @@ describe('Component: ReviewModal', () => {
     expect(screen.getByDisplayValue(/Достоинства/i)).toBeInTheDocument();
     expect(screen.getByDisplayValue(/Недостатки/i)).toBeInTheDocument();
     expect(screen.getByDisplayValue(/Комментарий/i)).toBeInTheDocument();
-
-    expect(screen.getByTestId(/Ужасно/i)).toBeRequired();
-    expect(screen.getByDisplayValue(/Музыкант/i)).toBeRequired();
-    expect(screen.getByDisplayValue(/Достоинства/i)).toBeRequired();
-    expect(screen.getByDisplayValue(/Недостатки/i)).toBeRequired();
-    expect(screen.getByDisplayValue(/Комментарий/i)).toBeRequired();
   });
 
 });

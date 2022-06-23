@@ -24,6 +24,12 @@ function ReviewModal({idGuitar, guitarName, onReviewCloseClick, openModalSuccess
   const [disadv, setDisadv] = useState('');
   const [comment, setComment] = useState('');
 
+  const [invalidUserName, setInvalidUserName] = useState(false);
+  const [invalidRate, setInvalidRate] = useState(false);
+  const [invalidAdv, setInvalidAdv] = useState(false);
+  const [invalidDisadv, setInvalidDisadv] = useState(false);
+  const [invalidComment, setInvalidComment] = useState(false);
+
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -49,7 +55,14 @@ function ReviewModal({idGuitar, guitarName, onReviewCloseClick, openModalSuccess
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    if (comment) {
+
+    if (userName.length === 0) {setInvalidUserName(true);}
+    if (adv.length === 0) {setInvalidAdv(true);}
+    if (disadv.length === 0) {setInvalidDisadv(true);}
+    if (comment.length === 0) {setInvalidComment(true);}
+    if (rate === 0) {setInvalidRate(true);}
+
+    if (userName && rate>0 && adv && disadv && comment) {
       onSubmit({
         guitarId: Number(idGuitar),
         userName: userName,
@@ -79,13 +92,16 @@ function ReviewModal({idGuitar, guitarName, onReviewCloseClick, openModalSuccess
                   <div className="form-review__name-wrapper">
                     <label className="form-review__label form-review__label--required" htmlFor="user-name">Ваше Имя</label>
                     <input className="form-review__input form-review__input--name"
-                      id="user-name" type="text" autoComplete="off" required
-                      onChange={(event) => setUserName(event.target.value)}
+                      id="user-name" type="text" autoComplete="off"
+                      onChange={(event) => {
+                        setUserName(event.target.value);
+                        setInvalidUserName(false);}}
                       data-testid="login"
                       autoFocus
                     />
-                    <p className="form-review__warning" style={{height:'16px'}}> {userName==='' ? 'Заполните поле' : ' '}</p>
+                    <p className="form-review__warning" style={{height:'16px'}}>{invalidUserName ? 'Заполните поле' : ''}</p>
                   </div>
+
                   <div>
                     <span className="form-review__label form-review__label--required">Ваша Оценка</span>
                     <div className="rate rate--reverse">
@@ -95,40 +111,54 @@ function ReviewModal({idGuitar, guitarName, onReviewCloseClick, openModalSuccess
                         return (
                           <Fragment key={keyValue}>
                             <input className="visually-hidden" id={`star-${STAR_COUNT-index}`} name="rate" type="radio" value={STAR_COUNT-index}
-                              required={STAR_COUNT-index===1}
                               data-testid={ratingRange[Math.floor(STAR_COUNT-index)-1]}
-                              onChange={({target}: ChangeEvent<HTMLInputElement>) => { setRate(Number(target.value));}}
+                              onChange={({target}: ChangeEvent<HTMLInputElement>) => {
+                                setRate(Number(target.value));
+                                setInvalidRate(false);}}
                             />
                             <label className="rate__label" htmlFor={`star-${STAR_COUNT-index}`} title={ratingRange[Math.floor(STAR_COUNT-index)-1]}></label>
                           </Fragment>
                         );
                       })}
-                      <p className="rate__message" style={{height:'16px'}}> {rate===0 ? 'Поставьте оценку<' : ' '}</p>
+                      <p className="rate__message" style={{height:'16px'}}> {invalidRate ? 'Поставьте оценку<' : ' '}</p>
                     </div>
                   </div>
                 </div>
+
                 <label className="form-review__label form-review__label--required" htmlFor="adv">Достоинства</label>
                 <input className="form-review__input"
-                  id="adv" type="text" autoComplete="off" required
-                  onChange={(event) => setAdv(event.target.value)}
+                  id="adv" type="text" autoComplete="off"
+                  onChange={(event) => {
+                    setAdv(event.target.value);
+                    setInvalidAdv(false);
+                  }}
                   data-testid="adv"
                 />
-                <p className="form-review__warning" style={{height:'16px'}}> {adv==='' ? 'Заполните поле' : ' '}</p>
+                <p className="form-review__warning" style={{height:'16px'}}> {invalidAdv ? 'Заполните поле' : ' '}</p>
+
                 <label className="form-review__label form-review__label--required" htmlFor="disadv">Недостатки</label>
                 <input className="form-review__input"
-                  id="disadv" type="text" autoComplete="off" required
-                  onChange={(event) => setDisadv(event.target.value)}
+                  id="disadv" type="text" autoComplete="off"
+                  onChange={(event) => {
+                    setDisadv(event.target.value);
+                    setInvalidDisadv(false);
+                  }}
                   data-testid="disadv"
                 />
-                <p className="form-review__warning" style={{height:'16px'}}> {disadv==='' ? 'Заполните поле' : ' '}</p>
+                <p className="form-review__warning" style={{height:'16px'}}> {invalidDisadv ? 'Заполните поле' : ' '}</p>
+
                 <label className="form-review__label form-review__label--required" htmlFor="comment">Комментарий</label>
                 <textarea className="form-review__input form-review__input--textarea"
-                  id="comment" rows={10} autoComplete="off" required
-                  onChange={(event) => setComment(event.target.value)}
+                  id="comment" rows={10} autoComplete="off"
+                  onChange={(event) => {
+                    setComment(event.target.value);
+                    setInvalidComment(false);
+                  }}
                   data-testid="comment"
                 >
                 </textarea>
-                <p className="form-review__warning" style={{height:'16px'}}> {comment==='' ? 'Заполните поле' : ' '}</p>
+                <p className="form-review__warning" style={{height:'16px'}}> {invalidComment ? 'Заполните поле' : ' '}</p>
+
                 <button className="button button--medium-20 form-review__button" type="submit">Отправить отзыв</button>
               </form>
               <button className="modal__close-btn button-cross" type="button" aria-label="Закрыть"

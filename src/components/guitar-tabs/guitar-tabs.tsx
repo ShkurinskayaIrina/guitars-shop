@@ -32,7 +32,7 @@ function GuitarTabs({guitar}: Props): JSX.Element {
             className = {`button button--medium tabs__button
             ${activeTab === tab ? '' : 'button--black-border'}`}
             onClick = {() => handleClick(tab)}
-            to={'#'}
+            to={`#${tab===guitarTabs[0]? 'characteristics' : 'descrintion'}`}
           >{tab}
           </Link>
         ))}

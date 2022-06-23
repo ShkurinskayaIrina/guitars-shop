@@ -89,16 +89,33 @@ function ReviewsList({guitarId, guitarName}: Props): JSX.Element {
         <Review commentForRender={comment} key={comment.id}/>
       ))}
 
-      {commentsSorted.length>commentsCount ?
-        <button className="button button--medium reviews__more-button"
-          onClick={() => handleShowMoreButtonClick()}
-        >
+      {
+        commentsSorted.length>commentsCount ?
+          <button className="button button--medium reviews__more-button hidden"
+            onClick={() => handleShowMoreButtonClick()}
+          >
         Показать еще отзывы
-        </button> :
-        ''}
+          </button> :
+          ''
+      }
 
-      <Link className="button button--up button--red-border button--big reviews__up-button" to="" onClick={onUpButtonClick}>Наверх
-      </Link>
+      {
+        commentsSorted.length === 0 ?
+          <Link to=""
+            className="button button--up button--red-border button--big"
+            style={{bottom:'-61px', right:'0', position:'absolute'}}
+            onClick={onUpButtonClick}
+          >
+        Наверх
+          </Link> :
+          <Link to=""
+            className="button button--up button--red-border button--big reviews__up-button"
+            onClick={onUpButtonClick}
+          >
+      Наверх
+          </Link>
+      }
+
 
       {isReviewModalOpened &&
       <ReviewModal idGuitar={guitarId}
