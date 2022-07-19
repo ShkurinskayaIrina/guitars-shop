@@ -1,89 +1,114 @@
 import { useParams } from 'react-router-dom';
 
+import Filter from '../filter/filter';
+import Sort from '../sort/sort';
 import ProductList from '../product-list/product-list';
 import Pagination from '../pagination/pagination';
+import Preloader from '../preloader/preloader';
 
 import { getCatalog } from '../../store/guitars-data/selector';
+import { getFilterPrice, getFilterTypes,
+  getFilter4Strings, getFilter6Strings, getFilter7Strings, getFilter12Strings,
+  getSortType, getSortOrder } from '../../store/guitars-process/selector';
 import { useAppSelector } from '../../hooks';
+import { GUITAR_COUNT_SHOWN, SortType, SortOrder } from '../../consts';
+import { Guitar } from '../../types/guitars';
 
-import { GUITAR_COUNT_SHOWN } from '../../consts';
-
-function Catalog():JSX.Element {
+function Catalog(): JSX.Element {
 
   const guitarsCatalog = useAppSelector(getCatalog);
+  const guitarsFilterPrice = useAppSelector(getFilterPrice);
+
+  const guitarsFilterType:{[key: string]: boolean} = useAppSelector(getFilterTypes);
+
+  const guitarsFilter4Strings = useAppSelector(getFilter4Strings);
+  const guitarsFilter6Strings = useAppSelector(getFilter6Strings);
+  const guitarsFilter7Strings = useAppSelector(getFilter7Strings);
+  const guitarsFilter12Strings = useAppSelector(getFilter12Strings);
+
+  const guitarsSortType = useAppSelector(getSortType);
+  const guitarsSortOrder = useAppSelector(getSortOrder);
 
   const {pageNumber = 1} = useParams<{pageNumber: string}>();
 
-  const pagesCount = Math.ceil(guitarsCatalog.length/GUITAR_COUNT_SHOWN);
+  if (guitarsCatalog.length === 0) {
+    return <Preloader />;
+  }
 
-  const guitarsForRender = guitarsCatalog.slice(GUITAR_COUNT_SHOWN*(Number(pageNumber)-1),
+  const filterByPrice = (el:Guitar) => {
+    if (guitarsFilterPrice !== undefined) {
+      if (el.price >= Number(guitarsFilterPrice.priceMin) &&
+      (Number(guitarsFilterPrice.priceMax) === 0 || el.price <= guitarsFilterPrice.priceMax)) {
+        return el;
+      }
+    }
+  };
+
+  const filterByType = (guitar: Guitar) => {
+    if (guitarsFilterType.acoustic === false &&
+      guitarsFilterType.electric === false &&
+      guitarsFilterType.ukulele === false) {
+      return guitar;
+    }
+    if (guitarsFilterType[guitar.type] === true) {
+      return guitar;
+    }
+  };
+
+  const filterByCountStrings = (guitar: Guitar) => {
+    if (guitarsFilter4Strings === false &&
+      guitarsFilter6Strings === false &&
+      guitarsFilter7Strings === false &&
+      guitarsFilter12Strings === false) {
+      return guitar;
+    }
+
+    if (guitarsFilter4Strings && guitar.stringCount===4) {
+      return guitar;
+    }
+    if (guitarsFilter6Strings && guitar.stringCount===6) {
+      return guitar;
+    }
+    if (guitarsFilter7Strings && guitar.stringCount===7) {
+      return guitar;
+    }
+    if (guitarsFilter12Strings && guitar.stringCount===12) {
+      return guitar;
+    }
+  };
+
+  const guitarsCatalogFiltered = guitarsCatalog
+    .filter(filterByPrice)
+    .filter(filterByType)
+    .filter(filterByCountStrings);
+
+  const pagesCount = Math.ceil(guitarsCatalogFiltered.length/GUITAR_COUNT_SHOWN);
+
+  let guitarsCatalogSort = guitarsCatalogFiltered;
+
+  if (guitarsSortType !== SortType.Popularity) {
+    if (guitarsSortOrder === SortOrder.Up) {
+      guitarsCatalogSort = guitarsCatalogFiltered.slice(0).sort((prev, next) => prev.price - next.price);
+    }
+    if (guitarsSortOrder === SortOrder.Down) {
+      guitarsCatalogSort = guitarsCatalogFiltered.slice(0).sort((prev, next) => next.price - prev.price);
+    }
+  } else {
+    if (guitarsSortOrder === SortOrder.Up) {
+      guitarsCatalogSort = guitarsCatalogFiltered.slice(0).sort((prev, next) => prev.rating - next.rating);
+    }
+    if ( guitarsSortOrder === SortOrder.Down) {
+      guitarsCatalogSort = guitarsCatalogFiltered.slice(0).sort((prev, next) => next.rating - prev.rating);
+    }
+  }
+
+  const guitarsForRender = guitarsCatalogSort.slice(GUITAR_COUNT_SHOWN*(Number(pageNumber)-1),
     GUITAR_COUNT_SHOWN*(Number(pageNumber)-1)+GUITAR_COUNT_SHOWN);
 
   return (
     <div className="catalog" data-testid="catalog">
-      <form className="catalog-filter">
-        <h2 className="title title--bigger catalog-filter__title">Фильтр</h2>
-        <fieldset className="catalog-filter__block">
-          <legend className="catalog-filter__block-title">Цена, ₽</legend>
-          <div className="catalog-filter__price-range">
-            <div className="form-input">
-              <label className="visually-hidden">Минимальная цена</label>
-              <input type="number" placeholder="1 000" id="priceMin" name="от"/>
-            </div>
-            <div className="form-input">
-              <label className="visually-hidden">Максимальная цена</label>
-              <input type="number" placeholder="30 000" id="priceMax" name="до"/>
-            </div>
-          </div>
-        </fieldset>
-        <fieldset className="catalog-filter__block">
-          <legend className="catalog-filter__block-title">Тип гитар</legend>
-          <div className="form-checkbox catalog-filter__block-item">
-            <input className="visually-hidden" type="checkbox" id="acoustic" name="acoustic"/>
-            <label htmlFor="acoustic">Акустические гитары</label>
-          </div>
-          <div className="form-checkbox catalog-filter__block-item">
-            <input className="visually-hidden" type="checkbox" id="electric" name="electric" defaultChecked/>
-            <label htmlFor="electric">Электрогитары</label>
-          </div>
-          <div className="form-checkbox catalog-filter__block-item">
-            <input className="visually-hidden" type="checkbox" id="ukulele" name="ukulele" defaultChecked/>
-            <label htmlFor="ukulele">Укулеле</label>
-          </div>
-        </fieldset>
-        <fieldset className="catalog-filter__block">
-          <legend className="catalog-filter__block-title">Количество струн</legend>
-          <div className="form-checkbox catalog-filter__block-item">
-            <input className="visually-hidden" type="checkbox" id="4-strings" name="4-strings" defaultChecked/>
-            <label htmlFor="4-strings">4</label>
-          </div>
-          <div className="form-checkbox catalog-filter__block-item">
-            <input className="visually-hidden" type="checkbox" id="6-strings" name="6-strings" defaultChecked/>
-            <label htmlFor="6-strings">6</label>
-          </div>
-          <div className="form-checkbox catalog-filter__block-item">
-            <input className="visually-hidden" type="checkbox" id="7-strings" name="7-strings"/>
-            <label htmlFor="7-strings">7</label>
-          </div>
-          <div className="form-checkbox catalog-filter__block-item">
-            <input className="visually-hidden" type="checkbox" id="12-strings" name="12-strings" disabled/>
-            <label htmlFor="12-strings">12</label>
-          </div>
-        </fieldset>
-        <button className="catalog-filter__reset-btn button button--black-border button--medium" type="reset">Очистить</button>
-      </form>
-      <div className="catalog-sort">
-        <h2 className="catalog-sort__title">Сортировать:</h2>
-        <div className="catalog-sort__type">
-          <button className="catalog-sort__type-button" aria-label="по цене">по цене</button>
-          <button className="catalog-sort__type-button" aria-label="по популярности">по популярности</button>
-        </div>
-        <div className="catalog-sort__order">
-          <button className="catalog-sort__order-button catalog-sort__order-button--up" aria-label="По возрастанию"></button>
-          <button className="catalog-sort__order-button catalog-sort__order-button--down" aria-label="По убыванию"></button>
-        </div>
-      </div>
-
+      <Filter />
+      <Sort />
       <ProductList catalog={guitarsForRender} />
       <Pagination pagesCount={pagesCount} pageCurrent={Number(pageNumber)} />
     </div>

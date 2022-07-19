@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
 import { Guitar } from '../../types/guitars';
 import { getNumGuitar } from '../../utils/utils';
-
+import { useEffect } from 'react';
+import { store } from '../../store/index';
+import { fetchComments } from '../../store/api-actions';
+import { useAppDispatch } from '../../hooks';
 import RatingBlock from '../../components/rating-block/rating-block';
 
 type Props = {
@@ -10,9 +13,13 @@ type Props = {
 
 function ProductCard({guitar}: Props): JSX.Element {
   const {id, previewImg, name, type, rating, price } = guitar;
-
   const numGuitar = getNumGuitar(previewImg);
   const  nameGuitar = `${name} ${type[0].toUpperCase()}${type.substring(1)}`;
+
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    store.dispatch(fetchComments(id));
+  }, [id, dispatch]);
 
   return (
     <div className="product-card">

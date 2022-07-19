@@ -18,7 +18,7 @@ const store = mockStore({
   DATA: {
     guitarsCatalog: mockCatalog,
     guitarCurrent: mockCatalog[0],
-    guitarComments: mockComments,
+    guitarComments: {1: mockComments},
   },
 });
 

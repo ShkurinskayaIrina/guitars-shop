@@ -5,6 +5,7 @@ import Breadcrumbs from '../breadcrumbs/breadcrumbs';
 import Catalog from '../catalog/catalog';
 import Footer from '../footer/footer';
 import NotFoundPage from '../not-found-page/not-found-page';
+import Preloader from '../preloader/preloader';
 
 import { getCatalog } from '../../store/guitars-data/selector';
 import { useAppSelector } from '../../hooks';
@@ -15,6 +16,10 @@ function MainPage(): JSX.Element {
   const { pageNumber } = useParams();
   const guitarsCatalog = useAppSelector(getCatalog);
   const pagesCount = Math.ceil(guitarsCatalog.length/GUITAR_COUNT_SHOWN);
+
+  if (guitarsCatalog.length === 0) {
+    return <Preloader />;
+  }
 
   if (Number(pageNumber) > pagesCount) {
     return <NotFoundPage/>;

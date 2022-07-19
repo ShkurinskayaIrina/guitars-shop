@@ -1,6 +1,8 @@
-import { Fragment, useEffect, useState } from 'react';
-import { fetchCountComments } from '../../store/api';
+import { Fragment } from 'react';
+import { useAppSelector } from '../../hooks';
 import { STAR_COUNT, ratingRange } from '../../consts';
+import { GuitarsComments } from '../../types/guitars';
+import { getGuitarComments } from '../../store/guitars-data/selector';
 
 type Props = {
   id: number,
@@ -11,20 +13,17 @@ type Props = {
 }
 
 function RatingBlock({id, rating, width, height, isReview}: Props): JSX.Element {
-  const [commentsCount, setCommentsCount] = useState(0);
-  const [fetching, setFetching] = useState(true);
 
-  useEffect(() => {
-    if (!isReview) {
-      if (fetching) {
-        fetchCountComments(id)
-          .then((data: number) => {
-            setCommentsCount(data);
-          })
-          .finally(()=>{setFetching(false);});
+  const allGuitarsReviews: GuitarsComments = useAppSelector(getGuitarComments);
+
+  let guitarCurrentReviews = 0;
+  if (allGuitarsReviews !== undefined ) {
+    if (Object.keys(allGuitarsReviews).length > 0)  {
+      if (allGuitarsReviews[id] !== undefined) {
+        guitarCurrentReviews = allGuitarsReviews[id].length;
       }
     }
-  }, [id, fetching, isReview]);
+  }
 
   return (
     <>
@@ -43,7 +42,7 @@ function RatingBlock({id, rating, width, height, isReview}: Props): JSX.Element 
 
         {isReview===false ?
           <Fragment>
-            <span className="visually-hidden">Всего оценок:</span> {commentsCount}
+            <span className="visually-hidden">Всего оценок:</span>{guitarCurrentReviews===0 ? '' : guitarCurrentReviews}
           </Fragment>
           :''}
       </p>

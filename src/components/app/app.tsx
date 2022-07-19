@@ -8,10 +8,10 @@ import ProductPage from '../product-page/product-page';
 import NotFoundPage from '../not-found-page/not-found-page';
 
 function App(): JSX.Element {
-
   useEffect(() => {
     store.dispatch(fetchCatalogGuitars());
   }, []);
+
 
   return (
     <Routes>

@@ -1,12 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { NameSpace } from '../../consts';
-import { QuestsData } from '../../types/state';
-import { Guitar, Guitars, Comments } from '../../types/guitars';
+import { GuitarsData } from '../../types/state';
+import { Guitar, Guitars, GuitarsComments } from '../../types/guitars';
 
-export const initialState: QuestsData = {
+export const initialState: GuitarsData = {
   guitarsCatalog: [] as unknown as Guitars,
   guitarCurrent: {} as Guitar,
-  guitarComments: [] as Comments,
+  guitarsComments: {} as GuitarsComments,
+  guitarsPriceRange: {
+    priceMin: 0,
+    priceMax: 0,
+  },
 };
 
 export const guitarsData = createSlice({
@@ -20,9 +24,13 @@ export const guitarsData = createSlice({
       state.guitarCurrent = action.payload;
     },
     loadComments: (state, action) => {
-      state.guitarComments = action.payload;
+      state.guitarsComments = { ...state.guitarsComments, [action.payload.id]: action.payload.data};
+    },
+    loadCatalogPriceRange: (state, action) => {
+      state.guitarsPriceRange.priceMin = action.payload.priceMin;
+      state.guitarsPriceRange.priceMax = action.payload.priceMax;
     },
   },
 });
 
-export const { loadCatalog, loadGuitar, loadComments } = guitarsData.actions;
+export const { loadCatalog, loadGuitar, loadComments, loadCatalogPriceRange } = guitarsData.actions;

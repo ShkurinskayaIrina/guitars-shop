@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAppDispatch } from '../../hooks';
 import { choosePage } from '../../store/guitars-process/guitars-process';
 
@@ -10,7 +10,7 @@ type Props = {
 
 function Pagination({pagesCount, pageCurrent}:Props): JSX.Element {
   const dispatch = useAppDispatch();
-
+  const location = useLocation();
   return (
     <div className="pagination page-content__pagination">
       <ul className="pagination__list">
@@ -19,7 +19,7 @@ function Pagination({pagesCount, pageCurrent}:Props): JSX.Element {
           onClick = {() => {dispatch(choosePage(pageCurrent-1));}}
         >
           <Link className="link pagination__page-link"
-            to={`/catalog/${pageCurrent-1}`}
+            to={`/catalog/${pageCurrent-1}/${location.search}`}
           >Назад
           </Link>
         </li>}
@@ -31,7 +31,7 @@ function Pagination({pagesCount, pageCurrent}:Props): JSX.Element {
                 onClick = {() => {dispatch(choosePage(keyValue));}}
               >
                 <Link className="link pagination__page-link"
-                  to={`/catalog/${keyValue}`}
+                  to={`/catalog/${keyValue}/${location.search}`}
                 >{keyValue}
                 </Link>
               </li>
@@ -43,7 +43,7 @@ function Pagination({pagesCount, pageCurrent}:Props): JSX.Element {
           onClick = {() => {dispatch(choosePage(pageCurrent+1));}}
         >
           <Link className="link pagination__page-link"
-            to={`/catalog/${pageCurrent+1}`}
+            to={`/catalog/${pageCurrent+1}/${location.search}`}
           >Далее
           </Link>
         </li>}

@@ -3,16 +3,54 @@ import {createMemoryHistory} from 'history';
 import {Provider} from 'react-redux';
 import {configureMockStore} from '@jedmao/redux-mock-store';
 import HistoryRouter from '../history-router/history-router';
-import ProductCard from './product-card';
+import { makeFakeGuitar, makeFakeComment } from '../../utils/mocks';
+import { SortType, SortOrder } from '../../consts';
+import { Comments } from '../../types/guitars';
 
-import { makeFakeGuitar } from '../../utils/mocks';
+import ProductCard from './product-card';
 
 const mockStore = configureMockStore();
 
-const mockGuitar = makeFakeGuitar();
-
 const history = createMemoryHistory();
-const store = mockStore({});
+
+const mockGuitar = makeFakeGuitar();
+const mockCatalog = new Array(2).fill(null).map(()=>(mockGuitar));
+
+const id = mockGuitar.id;
+const data: Comments = new Array(1).fill(null).map(() => (makeFakeComment()));
+
+const store = mockStore({
+  DATA: {
+    guitarsCatalog: mockCatalog,
+    guitarCurrent: mockGuitar,
+    guitarComments: {[id]: data },
+    guitarsPriceRange: {
+      priceMin: 0,
+      priceMax: 0,
+    },
+  },
+  PROCESS: {
+    pageCurrent: '1',
+    filterPrice: {
+      priceMin: 0,
+      priceMax: 0,
+    },
+
+    filterTypes: {
+      acoustic: false,
+      electric: false,
+      ukulele: false,
+    },
+
+    filter4Strings: false,
+    filter6Strings: false,
+    filter7Strings: false,
+    filter12Strings: false,
+
+    sortType: SortType.Original,
+    sortOrder: SortOrder.Original,
+  },
+});
 
 describe('Компонент: ProductCard', () => {
   it('корректно отрисовывается компонент', () => {

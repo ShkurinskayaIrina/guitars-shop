@@ -1,3 +1,4 @@
+import { Guitar } from '../types/guitars';
 
 export const getNumGuitar = (previewImg: string) => {
   let numGuitar;
@@ -12,3 +13,5 @@ export const isEscEvent = function (evt: KeyboardEvent) {
     return evt.key;
   }
 };
+
+export const getSortByPrice = (prev:Guitar, next:Guitar) => prev.price - next.price;

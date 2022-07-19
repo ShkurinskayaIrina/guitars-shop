@@ -1,11 +1,16 @@
 import { guitarsData, initialState } from './guitars-data';
-import { loadCatalog, loadGuitar, loadComments } from './guitars-data';
+import { loadCatalog, loadGuitar, loadCatalogPriceRange, loadComments } from './guitars-data';
 import { makeFakeGuitar, makeFakeComment } from '../../utils/mocks';
+import { Comments } from '../../types/guitars';
 
 describe('Reducers: guitarsData', () => {
-  const mockCatalog = new Array(20).fill(null).map(()=>(makeFakeGuitar()));
   const mockGuitar = makeFakeGuitar();
-  const mockComments = new Array(20).fill(null).map(() => (makeFakeComment()));
+  const mockCatalog = new Array(2).fill(null).map(()=>(mockGuitar));
+  const priceMin = mockCatalog[0].price;
+  const priceMax = mockCatalog[1].price;
+
+  const id = mockGuitar.id;
+  const data: Comments = new Array(1).fill(null).map(() => (makeFakeComment()));
 
   it('без дополнительных параметров вернет начальное состояние', ()=> {
     expect(guitarsData.reducer(void 0, {type: 'UNKNOWN_ACTION'}))
@@ -28,11 +33,22 @@ describe('Reducers: guitarsData', () => {
       });
   });
 
-  it ('обновит guitarComments при загрузке комментариев', () => {
-    expect(guitarsData.reducer(initialState, loadComments(mockComments)))
+  it ('обновит guitarsComments при загрузке комментариев', () => {
+    expect(guitarsData.reducer(initialState, loadComments({id, data})))
       .toEqual({
         ...initialState,
-        guitarComments: mockComments,
+        guitarsComments: {[id]: data },
+      });
+  });
+
+  it ('обновит catalogSortingByPrice при загрузке min и max цен каталога', () => {
+    expect(guitarsData.reducer(initialState, loadCatalogPriceRange({priceMin, priceMax})))
+      .toEqual({
+        ...initialState,
+        guitarsPriceRange: {
+          priceMin: priceMin,
+          priceMax: priceMax,
+        },
       });
   });
 });

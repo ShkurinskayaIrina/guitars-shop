@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import { store } from '../../store/index';
 import { fetchGuitar } from '../../store/api-actions';
 import { getGuitarCurrent } from '../../store/guitars-data/selector';
-
 import { useAppSelector } from '../../hooks';
 import { getNumGuitar } from '../../utils/utils';
 
@@ -14,7 +13,7 @@ import GuitarTabs from '../guitar-tabs/guitar-tabs';
 import ReviewsList from '../reviews-list/reviews-list';
 import RatingBlock from '../rating-block/rating-block';
 import Footer from '../footer/footer';
-import NotFoundPage from '../not-found-page/not-found-page';
+import Preloader from '../preloader/preloader';
 
 function ProductPage (): JSX.Element {
   const { id } = useParams();
@@ -28,7 +27,7 @@ function ProductPage (): JSX.Element {
   const numGuitar = getNumGuitar(previewImg);
 
   if (Object.keys(guitarCurrent).length === 0) {
-    return <NotFoundPage />;
+    return <Preloader />;
   }
 
   return (

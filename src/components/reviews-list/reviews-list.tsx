@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 
 import { store } from '../../store/index';
 import { fetchComments } from '../../store/api-actions';
-import { getGuitarComments } from '../../store/guitars-data/selector';
 import { useAppSelector } from '../../hooks';
-
+import { Comments, GuitarsComments } from '../../types/guitars';
+import { getGuitarComments } from '../../store/guitars-data/selector';
 import Review from '../review/review';
 import ReviewModal from '../review-modal/review-modal';
 import ModalSuccess from '../modal-success/modal-success';
@@ -18,6 +18,9 @@ type Props = {
 }
 
 function ReviewsList({guitarId, guitarName}: Props): JSX.Element {
+  let commentsSorted = [] as Comments;
+  let commentsForRender = [] as Comments;
+
   const [commentsCount, setCommentsCount] = useState(COMMENTS_COUNT_PER_STEP);
   const [isReviewModalOpened, setIsReviewModalOpened] = useState(false);
   const [isModalSuccessOpened, setIsModalSuccessOpened] = useState(false);
@@ -33,13 +36,24 @@ function ReviewsList({guitarId, guitarName}: Props): JSX.Element {
     };
   });
 
-  const guitarComments = useAppSelector(getGuitarComments);
+  const allGuitarsReviews: GuitarsComments = useAppSelector(getGuitarComments);
 
-  const commentsSorted =  guitarComments.slice(0).sort((prev, next) =>
-    new Date(next.createAt).getTime() - new Date(prev.createAt).getTime(),
-  );
+  let guitarComments = [] as Comments;
+  if (allGuitarsReviews !== undefined ) {
+    if (Object.keys(allGuitarsReviews).length > 0)  {
+      if (allGuitarsReviews[Number(guitarId as string)] !== undefined) {
+        guitarComments = allGuitarsReviews[Number(guitarId as string)];
+      }
+    }
+  }
 
-  const commentsForRender = commentsSorted.slice(0, commentsCount);
+  if (guitarComments !== undefined) {
+    commentsSorted =  guitarComments.slice(0).sort((prev, next) =>
+      new Date(next.createAt).getTime() - new Date(prev.createAt).getTime(),
+    );
+
+    commentsForRender = commentsSorted.slice(0, commentsCount);
+  }
 
   function handleShowMoreButtonClick() {
     setCommentsCount(Math.min(commentsSorted.length, commentsCount + COMMENTS_COUNT_PER_STEP));

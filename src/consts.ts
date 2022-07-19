@@ -19,3 +19,15 @@ export enum NameSpace {
   Data = 'DATA',
   Process = 'PROCESS',
 }
+
+export enum SortType {
+  Original = 'Original',
+  Price = 'Price',
+  Popularity = 'Popularity',
+}
+
+export enum SortOrder {
+  Original = 'Original',
+  Up = 'Up',
+  Down = 'Down',
+}

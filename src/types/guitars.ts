@@ -28,4 +28,6 @@ export type Comment = NewComment & {
 
 export type Comments = Comment[];
 
-
+export type GuitarsComments = {
+  [key: number]: Comments,
+};

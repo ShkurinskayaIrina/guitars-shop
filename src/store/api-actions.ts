@@ -2,7 +2,8 @@ import {AxiosInstance} from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, State } from '../types/state';
 import { errorHandle } from '../services/error-handle';
-import { loadCatalog, loadGuitar, loadComments } from './guitars-data/guitars-data';
+import { getSortByPrice } from '../utils/utils';
+import { loadCatalog, loadGuitar, loadComments, loadCatalogPriceRange } from './guitars-data/guitars-data';
 
 import { Guitar, Guitars, NewComment, Comments } from '../types/guitars';
 import { APIRoute } from '../consts';
@@ -16,7 +17,11 @@ export const fetchCatalogGuitars = createAsyncThunk<void, undefined, {
   async(_arg, {dispatch, extra: api})=>{
     try {
       const { data } = await api.get<Guitars>(APIRoute.Guitars);
+      const catalogSortingByPrice = data.sort(getSortByPrice);
+      const priceMin = catalogSortingByPrice[0].price;
+      const priceMax = catalogSortingByPrice[catalogSortingByPrice.length-1].price;
       dispatch(loadCatalog(data));
+      dispatch(loadCatalogPriceRange({priceMin, priceMax}));
     } catch (error) {
       errorHandle(error);
     }
@@ -48,7 +53,7 @@ export const fetchComments = createAsyncThunk<void, number, {
   async (id, {dispatch, extra: api}) => {
     try {
       const {data} = await api.get<Comments>(`${APIRoute.Guitars}/${id}/comments`);
-      dispatch(loadComments(data));
+      dispatch(loadComments({id, data}));
     } catch (error) {
       errorHandle(error);
     }
